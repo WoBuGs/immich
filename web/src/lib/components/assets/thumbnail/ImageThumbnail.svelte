@@ -46,6 +46,12 @@
   let loaded = $state(false);
   let errored = $state(false);
 
+  $effect(() => {
+    url;
+    loaded = false;
+    errored = false;
+  });
+
   const setLoaded = () => {
     loaded = true;
     onComplete?.(false);
@@ -71,21 +77,23 @@
   );
 </script>
 
-{#if errored}
-  <BrokenAsset class={[sharedClasses, brokenAssetClass]} width={widthStyle} height={heightStyle} />
-{:else}
-  <Image
-    src={url}
-    onLoad={setLoaded}
-    onError={setErrored}
-    class={['bg-gray-300 object-cover dark:bg-gray-700', sharedClasses, imageClass]}
-    {style}
-    alt={loaded || errored ? altText : ''}
-    draggable={false}
-    title={title ?? undefined}
-    loading={preload ? 'eager' : 'lazy'}
-  />
-{/if}
+{#key url}
+  {#if errored}
+    <BrokenAsset class={[sharedClasses, brokenAssetClass]} width={widthStyle} height={heightStyle} />
+  {:else}
+    <Image
+      src={url}
+      onLoad={setLoaded}
+      onError={setErrored}
+      class={['bg-gray-300 object-cover dark:bg-gray-700', sharedClasses, imageClass]}
+      {style}
+      alt={loaded || errored ? altText : ''}
+      draggable={false}
+      title={title ?? undefined}
+      loading={preload ? 'eager' : 'lazy'}
+    />
+  {/if}
+{/key}
 
 {#if hidden}
   <div class="absolute inset-s-1/2 top-1/2 translate-[-50%] transform">
